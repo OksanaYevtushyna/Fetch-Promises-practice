@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Promise, Fetch API</title>
+        <style>
+            .users-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .user {
+                width: 200px;
+                height: 300px;
+                margin: 10px 20px;
+                background-color: #fafafa;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <h2>Fetch</h2>
+        <p>Testing the fetch method</p>
+        <button id="get-users">Get Users</button>
+        <div class="users-wrapper">
+            
+        </div>
+        
+        <script>
+            
+            // Fetch 
+            
+            const setContent = (content) => {
+                  document.body.innerHTML += content;
+              };
+
+              const urlAddress = 'https://jsonplaceholder.typicode.com';
+
+              const request = (endpoint, method = 'GET', data = {}) => {
+                  const body = method === "GET" ? void 0 : JSON.stringify(data);
+                  return fetch(`${urlAddress}/${endpoint}`, {
+                      method,
+                      body,
+                      headers: {
+                        "Content-Type": "application/json"
+                      },
+                  })
+                  .then((res) => res.json())
+                  .catch((err) => console.error(err));
+              };
+            
+              const renderUsers = (users) => {
+                  const usersWrapper = document.querySelector('.users-wrapper');
+                  users.forEach((user) => {
+                      usersWrapper.innerHTML += `<div class="user">
+                                                    Name: ${user.name} <br/>
+                                                    Phone: ${user.phone} <br/>
+                                                    Email: ${user.email} <br/>
+                                                 </div>`;
+                  })
+              }
+
+              const getUsers = async() => {
+                  try {
+                      const users = await request('users/');
+                      renderUsers(users);
+                      //setContent(JSON.stringify(users));
+                      debugger;
+                  } catch(err) {
+                      alert(err);
+                  }
+              }
+
+              const button = document.querySelector('#get-users');
+              button.addEventListener('click', getUsers);
+            
+            
+            // Promises
+            
+            const exercises = {
+                pullUp(count){
+                    const promise = new Promise(function(resolve, reject){
+                        var onePullUp = 500;
+                        console.log('Starting to pull up!');
+                        if(!count){
+                            reject();
+                            return
+                        }
+                        setTimeout(() => {
+                            console.log(`I have made ${count} pull up!`);
+                            resolve();
+                        }, count * onePullUp);
+                    })
+                    return promise;
+                },
+                pushUp(count){
+                    const promise = new Promise(function(resolve, reject){
+                        var onePushUp = 350;
+                        console.log('Starting to push up!');
+                        if(!count){
+                            reject();
+                            return
+                        }
+                        setTimeout(() => {
+                            console.log(`I have made ${count} push up!`);
+                            resolve();
+                        }, count * onePushUp);
+                    })
+                    return promise;
+                },
+                sitDown(count){
+                    const promise = new Promise(function(resolve, reject){
+                        var oneSitDown = 200;
+                        console.log('Starting to sit down!');
+                        if(!count){
+                            reject();
+                            return
+                        }
+                        setTimeout(() => {
+                            console.log(`I have made ${count} sit down!`);
+                            resolve();
+                        }, count * oneSitDown);
+                    })
+                    return promise;
+                }
+            };
+            
+            
+            exercises.pullUp(8).then(() => {
+                return exercises.pushUp(6);
+            })
+            .then(() => {
+                return exercises.sitDown(17);
+            })
+            .catch((error) => {
+                console.log('Error!')
+            })
+            
+            
+            
+        </script>
+    </body>
+</html>
